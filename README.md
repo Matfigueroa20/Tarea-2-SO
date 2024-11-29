@@ -37,7 +37,7 @@ Una vez ejecutado, podrá ver el comportamiento de las hebras productoras y cons
 <h4>Parte 2: Simulador de Memoria Virtual</h4>
 <p>Ejecuta el siguiente comando:</p>
 <pre>
-<code>./memoria -m [int] -a [argumento] -f [argumento]</code>
+<code>./mvirtual -m [int] -a [argumento] -f [argumento]</code>
 </pre>
 <ul>
   <li><code>-m</code>: Número de marcos de página.</li>
