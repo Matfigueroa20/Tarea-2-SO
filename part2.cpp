@@ -1,6 +1,7 @@
 #include <iostream>
 #include <algorithm>
 #include <getopt.h>
+#include <fstream>
 #include <vector>
 using namespace std;
 
@@ -82,8 +83,6 @@ void Hash::displayHash() {
 
 void fifo(int marcos, vector<int> entrada) {
     int fallos = 0;
-    bool acierto;
-
     Hash h(marcos);
 
     for (int i = 0; i < entrada.size(); i++)
@@ -93,15 +92,12 @@ void fifo(int marcos, vector<int> entrada) {
             fallos++;
         }
     }
-    cout << fallos << endl;
+    cout << "fallos " << fallos << endl;
     h.displayHash();
 }
 
 void lru(int marcos = 4, vector<int> entrada = {0, 1, 3, 4, 1, 2, 5, 1, 2, 3, 4}) {
     int fallos = 0;
-    int pointer = 0;
-    bool acierto;
-
     vector<int> aux = {};
     Hash h(marcos);
     aux.resize(marcos);
@@ -123,22 +119,18 @@ void lru(int marcos = 4, vector<int> entrada = {0, 1, 3, 4, 1, 2, 5, 1, 2, 3, 4}
         aux.push_back(m);
     }
 
-    cout << fallos << endl;
+    cout << "fallos " << fallos << endl;
     h.displayHash();
 }
 
-void lruclock(int marcos, vector<int> entrada) {
+void lruClock(int marcos, vector<int> entrada) {
     int fallos = 0;
     int pointer = 0;
-    bool acierto;
-    bool insert = true;
 
-    vector<int> aux = {};
     vector<int> reference = {};
     
     Hash h(marcos);
 
-    aux.resize(marcos);
     reference.resize(marcos);
 
     for (size_t i = 0; i < marcos; i++)
@@ -148,15 +140,14 @@ void lruclock(int marcos, vector<int> entrada) {
     
     for (int i = 0; i < entrada.size(); i++)
     {
-        insert = true;
         if(h.checkValue(entrada[i]) == -1){
-            while (insert)
+            while (true)
             {
-                if (reference[pointer % marcos] = 0)
+                if (reference[pointer % marcos] == 0)
                 {
                     reference[pointer % marcos] = 0;
-                    insert = false;
                     h.insertItem(pointer % marcos, entrada[i]);
+                    pointer += 1;
                     break;
                 }
                 reference[pointer % marcos] -= 1;
@@ -164,10 +155,10 @@ void lruclock(int marcos, vector<int> entrada) {
             }
             fallos++;
         }else{
-        reference[h.checkPosition(entrada[i])] = 1;
+            reference[h.checkPosition(entrada[i])] = 1;
         }
     }
-    cout << fallos << endl;
+    cout << "fallos " << fallos << endl;
     h.displayHash();
 }
 
@@ -175,7 +166,6 @@ void optimo(int marcos, vector<int> entrada) {
     int fallos = 0;
     int pointer = 0;
     int n = 0;
-    bool insert;
 
     vector<int> aux = {};
     Hash h(marcos);
@@ -217,8 +207,79 @@ void optimo(int marcos, vector<int> entrada) {
     h.displayHash();
 }
 
+vector<int> parser(const string &archivo)
+{
+    vector<int> entrada = {};
+    ifstream archivoIngresado(archivo);
+    if (!archivoIngresado.is_open())
+    {
+        std::cerr << "Error:" << archivo << "no se pudo abrir." << std::endl;
+        exit(EXIT_FAILURE);
+    }
+
+    int valor;
+    while (archivoIngresado >> valor)
+    {
+        entrada.push_back(valor);
+    }
+    archivoIngresado.close();
+    return entrada;
+}
+
 int main(int argc, char **argv) {
-    lruclock(4, {1, 2, 3, 4, 2, 1, 5, 6, 2, 1, 2, 3, 7, 6, 3, 2, 1, 2, 3, 6});
-    lru(4, {1, 2, 3, 4, 2, 1, 5, 6, 2, 1, 2, 3, 7, 6, 3, 2, 1, 2, 3, 6});
+    int marcos = 0;
+    string algoritmo;
+    string archivo;
+    vector<int> entrada;
+
+    int opt;
+    while ((opt = getopt(argc, argv, "m:a:f:")) != -1)
+    {
+        switch (opt)
+        {
+        case 'm':
+            marcos = std::stoi(optarg);
+            break;
+        case 'a':
+            algoritmo = optarg;
+            break;
+        case 'f':
+            archivo = optarg;
+            break;
+        default:
+            cerr << "./mvirtual -m <marcos> -a <algoritmo> -f <archivo>" << endl;
+            exit(EXIT_FAILURE);
+        }
+    }
+
+    if (marcos <= 0 || algoritmo.empty() || archivo.empty())
+    {
+        cerr << "Error: datos ingresados incorrectamente" << endl;
+        return EXIT_FAILURE;
+    }
+
+    entrada = parser(archivo);
+
+    if (algoritmo == "FIFO")
+    {
+        fifo(marcos, entrada);
+    }
+    else if (algoritmo == "LRU")
+    {
+        lru(marcos, entrada);
+    }
+    else if (algoritmo == "OPTIMO")
+    {
+        optimo(marcos, entrada);
+    }
+    else if (algoritmo == "LRURELOJ")
+    {
+        lruClock(marcos, entrada);
+    }
+    else
+    {
+        cerr << "Error: Algoritmo no reconocido. Use FIFO, LRU, LRUR o OPTIMO." << std::endl;
+        return EXIT_FAILURE;
+    }
     return 0;
 }

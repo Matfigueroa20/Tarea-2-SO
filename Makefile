@@ -1,6 +1,6 @@
 # Variables
-CXX  = g++-14
-CXXFLAGS = -std=c++11 -Wall -pthread -Wextra -Werror -pedantic -O3
+CXX  = g++
+CXXFLAGS = -std=c++11 -Wall -pthread -Wextra -O3 -w
 TARGET1 = simulapc
 TARGET2 = mvirtual
 
