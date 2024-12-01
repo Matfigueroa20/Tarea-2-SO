@@ -41,7 +41,7 @@ Una vez ejecutado, podrá ver el comportamiento de las hebras productoras y cons
 </pre>
 <ul>
   <li><code>-m</code>: Número de marcos de página.</li>
-  <li><code>-a</code>: Algoritmo de reemplazo (<code>FIFO</code>, <code>LRU</code>, <code>LRUR</code>, <code>OPTIMO</code>).</li>
+  <li><code>-a</code>: Algoritmo de reemplazo (<code>FIFO</code>, <code>LRU</code>, <code>LRURELOJ</code>, <code>OPTIMO</code>).</li>
   <li><code>-f</code>: Archivo .txt con referencias de páginas  (por defecto en el proyecto se encuentra referencias.txt). </li>
 </ul>
 Una vez ejecutado, podrá ver el número de fallos de página dependiendo de la cantidad de marcos y el algoritmo de reemplazo seleccionado. 
